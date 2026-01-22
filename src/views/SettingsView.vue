@@ -30,7 +30,7 @@
             <p class="text-sm text-muted-foreground">{{ t('settings.importDataDesc') }}</p>
           </div>
           <div class="flex gap-2">
-            <input ref="fileInputRef" type="file" accept=".json" class="hidden" @change="handleFileSelect" />
+            <input ref="fileInputRef" type="file" accept=".json,application/json,text/plain" class="hidden" @change="handleFileSelect" />
             <Button @click="triggerFileInput" variant="outline">
               <Upload class="mr-2 h-4 w-4" />
               {{ t('settings.selectFile') }}
