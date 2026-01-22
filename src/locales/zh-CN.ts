@@ -209,7 +209,7 @@ export default {
     darkMatterTank: '增加暗物质存储上限',
     missileSilo: '存储和发射导弹，每级可存储10枚导弹',
     terraformer: '改造行星地形，每级增加30个可用空间',
-    lunarBase: '增加月球可用空间，每级+5空间',
+    lunarBase: '增加月球可用空间，每级+30空间',
     sensorPhalanx: '侦测周围星系的舰队活动',
     jumpGate: '瞬间传送舰队到其他月球',
     planetDestroyerFactory: '建造能够摧毁行星的终极武器',
