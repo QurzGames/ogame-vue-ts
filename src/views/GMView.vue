@@ -318,6 +318,7 @@
   import * as npcBehaviorLogic from '@/logic/npcBehaviorLogic'
   import * as publicLogic from '@/logic/publicLogic'
   import { calculateMaxFleetStorage } from '@/logic/fleetStorageLogic'
+  import { calculateMissileSiloCapacity } from '@/logic/shipLogic'
   import { Home, Trash2 } from 'lucide-vue-next'
 
   // --- 预设系统 ---
@@ -569,17 +570,13 @@
         })
       } else if (section.tabValue === 'defense') {
         if (!selectedPlanet.value) return
-        const siloLevel = selectedPlanet.value.buildings[BuildingType.MissileSilo] || 0
-        const missileCapacity = siloLevel * 10
-        const halfCapacity = missileCapacity / 2
-        
+        const missileCapacity = calculateMissileSiloCapacity(selectedPlanet.value.buildings)
+        const defaultMissileCount = Math.floor(missileCapacity / 2)
+
         section.items.forEach((item: string) => {
-          if (item === DefenseType.AntiBallisticMissile) {
-            // 反弹道导弹占用1个空间，分配一半容量
-            section.setValue(item, Math.floor(halfCapacity))
-          } else if (item === DefenseType.InterplanetaryMissile) {
-            // 星际导弹占用1个空间，分配一半容量
-            section.setValue(item, Math.floor(halfCapacity))
+          // 两种导弹都占用1格空间，默认各分配一半容量
+          if (item === DefenseType.AntiBallisticMissile || item === DefenseType.InterplanetaryMissile) {
+            section.setValue(item, defaultMissileCount)
           } else {
             section.setValue(item, 10000)
           }
