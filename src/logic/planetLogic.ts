@@ -173,7 +173,7 @@ export const createMoon = (
   moonSuffix: string = "'s Moon",
   diameter?: number
 ): Planet => {
-  const moonId = `moon_${Date.now()}`
+  const moonId = `moon_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
   const moon: Planet = {
     id: moonId,
     name: `${parentPlanet.name}${moonSuffix}`,

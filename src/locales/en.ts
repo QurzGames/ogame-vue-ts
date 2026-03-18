@@ -1101,6 +1101,15 @@ export default {
   },
   gmView: {
     title: 'GM Control Panel',
+    presets: 'Presets',
+    choosePreset: 'Choose Preset',
+    defaultPreset: 'Default Preset',
+    applyPreset: 'Apply Preset',
+    savePreset: 'Save Preset',
+    presetName: 'Preset Name',
+    presetNameRequired: 'Please enter a preset name',
+    presetSaved: 'Preset saved',
+    presetApplied: 'Preset applied',
     adminOnly: 'Admin Only',
     selectPlanet: 'Select Planet',
     choosePlanet: 'Choose a planet',
@@ -1291,6 +1300,13 @@ export default {
       npcEliminatedMessage: "You destroyed all of {npcName}'s planets! This faction has been completely wiped out."
     },
     searchPlaceholder: 'Search NPC name...',
+    sort: {
+      label: 'Sort',
+      reputation: 'Reputation',
+      planets: 'Planets',
+      difficulty: 'Difficulty',
+      allies: 'Allies'
+    },
     // Notification types
     notificationType: {
       tradeOffer: 'Trade Offer',

@@ -100,6 +100,39 @@ export const migrateGameData = (): void => {
       needsSave = true
     }
 
+    // 修复重复的星球ID
+    if (oldData.player?.planets && Array.isArray(oldData.player.planets)) {
+      const idCounts = new Map<string, number>()
+      const idMap = new Map<string, string>() // 映射：原始ID + 坐标 -> 新ID
+      
+      oldData.player.planets.forEach((planet: Planet) => {
+        const count = idCounts.get(planet.id) || 0
+        if (count > 0) {
+          // 发现重复ID
+          const newId = `${planet.id}_${Math.random().toString(36).substring(2, 9)}`
+          const posKey = `${planet.position.galaxy}:${planet.position.system}:${planet.position.position}`
+          idMap.set(`${planet.id}_${posKey}`, newId)
+          planet.id = newId
+          needsSave = true
+        }
+        idCounts.set(planet.id, count + 1)
+      })
+      
+      // 如果有ID被修改，需要更新月球的 parentPlanetId
+      if (idMap.size > 0) {
+        oldData.player.planets.forEach((planet: Planet) => {
+          if (planet.isMoon && planet.parentPlanetId) {
+            const posKey = `${planet.position.galaxy}:${planet.position.system}:${planet.position.position}`
+            const newParentId = idMap.get(`${planet.parentPlanetId}_${posKey}`)
+            if (newParentId) {
+              planet.parentPlanetId = newParentId
+              needsSave = true
+            }
+          }
+        })
+      }
+    }
+
     // 迁移温度数据：为没有温度的星球生成温度
     // 玩家星球
     if (oldData.player?.planets && Array.isArray(oldData.player.planets)) {

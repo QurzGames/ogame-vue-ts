@@ -1087,6 +1087,15 @@ export default {
   },
   gmView: {
     title: 'Панель управления GM',
+    presets: 'Предустановки',
+    choosePreset: 'Выбрать предустановку',
+    defaultPreset: 'Стандартная',
+    applyPreset: 'Применить',
+    savePreset: 'Сохранить',
+    presetName: 'Название',
+    presetNameRequired: 'Введите название',
+    presetSaved: 'Сохранено',
+    presetApplied: 'Применено',
     adminOnly: 'Только для администратора',
     selectPlanet: 'Выбрать планету',
     choosePlanet: 'Выберите планету',
@@ -1186,6 +1195,13 @@ export default {
     }
   },
   diplomacy: {
+    sort: {
+      label: 'Сортировка',
+      reputation: 'Репутация',
+      planets: 'Планеты',
+      difficulty: 'Сложность',
+      allies: 'Союзники'
+    },
     title: 'Дипломатия',
     description: 'Управление дипломатическими отношениями с NPC',
     tabs: {

@@ -515,7 +515,7 @@ export const createQuestNotification = (
 ): QuestNotification => {
   const quest = getQuestById(questId)
   return {
-    id: `quest_notification_${Date.now()}`,
+    id: `quest_notification_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     timestamp: Date.now(),
     questId,
     questTitleKey: quest?.titleKey || '',

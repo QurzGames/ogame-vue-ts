@@ -66,7 +66,7 @@ export const simulateBattle = async (
 
   // 生成战斗报告
   const battleResult: BattleResult = {
-    id: `battle_${Date.now()}`,
+    id: `battle_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     timestamp: Date.now(),
     attackerId: '',
     defenderId: '',

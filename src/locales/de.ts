@@ -1085,6 +1085,15 @@ export default {
   },
   gmView: {
     title: 'GM-Kontrollpanel',
+    presets: 'Vorlagen',
+    choosePreset: 'Vorlage wählen',
+    defaultPreset: 'Standardvorlage',
+    applyPreset: 'Vorlage anwenden',
+    savePreset: 'Vorlage speichern',
+    presetName: 'Vorlagenname',
+    presetNameRequired: 'Bitte geben Sie einen Namen ein',
+    presetSaved: 'Vorlage gespeichert',
+    presetApplied: 'Vorlage angewendet',
     adminOnly: 'Nur Admin',
     selectPlanet: 'Planet auswählen',
     choosePlanet: 'Einen Planeten auswählen',
@@ -1185,6 +1194,13 @@ export default {
     }
   },
   diplomacy: {
+    sort: {
+      label: 'Sortieren',
+      reputation: 'Ruf',
+      planets: 'Planeten',
+      difficulty: 'Schwierigkeit',
+      allies: 'Verbündete'
+    },
     title: 'Diplomatie',
     description: 'Verwalte diplomatische Beziehungen mit NPCs',
     tabs: {

@@ -79,6 +79,35 @@
 
       <!-- 建筑/科技/舰船/防御/军官 - 统一配置渲染 -->
       <TabsContent v-for="section in gmSections" :key="section.tabValue" :value="section.tabValue" class="space-y-4">
+        <!-- 预设操作区 -->
+        <Card v-if="section.tabValue !== 'officers'" class="mb-4">
+          <CardHeader class="pb-3">
+            <CardTitle class="text-lg">{{ t('gmView.presets') || 'Presets' }}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="flex flex-col sm:flex-row gap-4 items-end sm:items-center">
+              <div class="flex gap-2 w-full sm:w-auto">
+                <Select v-model="selectedPresets[section.tabValue]">
+                  <SelectTrigger class="w-[200px]">
+                    <SelectValue :placeholder="t('gmView.choosePreset') || 'Choose Preset'" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">{{ t('gmView.defaultPreset') || 'Default Preset' }}</SelectItem>
+                    <SelectItem v-for="p in customPresets[section.tabValue]" :key="p.id" :value="p.id">
+                      {{ p.name }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button @click="handleApplyPreset(section)">{{ t('gmView.applyPreset') || 'Apply' }}</Button>
+              </div>
+              <div class="flex gap-2 w-full sm:w-auto ml-auto">
+                <Input v-model="presetNames[section.tabValue]" :placeholder="t('gmView.presetName') || 'Preset Name'" class="w-[150px]" />
+                <Button @click="handleSavePreset(section)" variant="outline">{{ t('gmView.savePreset') || 'Save' }}</Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>{{ t(section.titleKey) }}</CardTitle>
@@ -263,7 +292,156 @@
   import { BuildingType, TechnologyType, ShipType, DefenseType, OfficerType } from '@/types/game'
   import * as npcBehaviorLogic from '@/logic/npcBehaviorLogic'
   import * as publicLogic from '@/logic/publicLogic'
+  import { calculateMaxFleetStorage } from '@/logic/fleetStorageLogic'
   import { Home } from 'lucide-vue-next'
+
+  // --- 预设系统 ---
+  interface GMPreset {
+    id: string
+    name: string
+    values: Record<string, number>
+  }
+
+  const getPresets = (type: string): GMPreset[] => {
+    const data = localStorage.getItem(`gm_presets_${type}`)
+    return data ? JSON.parse(data) : []
+  }
+
+  const savePresets = (type: string, presets: GMPreset[]) => {
+    localStorage.setItem(`gm_presets_${type}`, JSON.stringify(presets))
+  }
+
+  const presetNames = ref<Record<string, string>>({
+    buildings: '',
+    research: '',
+    ships: '',
+    defense: ''
+  })
+
+  const selectedPresets = ref<Record<string, string>>({
+    buildings: 'default',
+    research: 'default',
+    ships: 'default',
+    defense: 'default'
+  })
+
+  const customPresets = ref<Record<string, GMPreset[]>>({
+    buildings: getPresets('buildings'),
+    research: getPresets('research'),
+    ships: getPresets('ships'),
+    defense: getPresets('defense')
+  })
+
+  const handleSavePreset = (section: any) => {
+    const name = presetNames.value[section.tabValue]?.trim()
+    if (!name) {
+      toast.error(t('gmView.presetNameRequired') || '请输入预设名称')
+      return
+    }
+    
+    const values: Record<string, number> = {}
+    section.items.forEach((item: string) => {
+      values[item] = section.getValue(item)
+    })
+    
+    const newPreset: GMPreset = {
+      id: Date.now().toString(),
+      name,
+      values
+    }
+    
+    if (customPresets.value[section.tabValue]) {
+      customPresets.value[section.tabValue]!.push(newPreset)
+      savePresets(section.tabValue, customPresets.value[section.tabValue]!)
+      presetNames.value[section.tabValue] = ''
+      selectedPresets.value[section.tabValue] = newPreset.id
+      toast.success(t('gmView.presetSaved') || '预设保存成功')
+    }
+  }
+
+  const handleApplyPreset = (section: any) => {
+    const presetId = selectedPresets.value[section.tabValue]
+    if (!presetId) return
+
+    if (presetId === 'default') {
+      if (section.tabValue === 'buildings') {
+        const explicitMax: Record<string, number> = {
+          [BuildingType.NaniteFactory]: 10,
+          [BuildingType.MissileSilo]: 10,
+          [BuildingType.JumpGate]: 5,
+          [BuildingType.PlanetDestroyerFactory]: 3,
+          [BuildingType.GeoResearchStation]: 10,
+          [BuildingType.DeepDrillingFacility]: 10,
+          [BuildingType.University]: 10
+        }
+        section.items.forEach((item: string) => {
+          section.setValue(item, explicitMax[item] || 50)
+        })
+      } else if (section.tabValue === 'research') {
+        const explicitMax: Record<string, number> = {
+          [TechnologyType.ComputerTechnology]: 10,
+          [TechnologyType.GravitonTechnology]: 1,
+          [TechnologyType.PlanetDestructionTech]: 10,
+          [TechnologyType.MiningTechnology]: 15,
+          [TechnologyType.IntergalacticResearchNetwork]: 10,
+          [TechnologyType.MineralResearch]: 20,
+          [TechnologyType.CrystalResearch]: 20,
+          [TechnologyType.FuelResearch]: 20
+        }
+        section.items.forEach((item: string) => {
+          section.setValue(item, explicitMax[item] || 100)
+        })
+      } else if (section.tabValue === 'ships') {
+        if (!selectedPlanet.value) return
+        
+        // 重新计算最大舰队仓储，确保数据是最新的
+        const maxStorage = calculateMaxFleetStorage(selectedPlanet.value, gameStore.player.technologies)
+        
+        const shipTypes = Object.values(ShipType)
+        // 将总容量平均分配给每种舰船
+        const storagePerShip = maxStorage / shipTypes.length
+        
+        shipTypes.forEach(type => {
+          const usage = SHIPS.value[type]?.storageUsage || 1
+          // 如果 usage 为 0 (如某些特殊单位)，则给予一个默认数量，或者跳过
+          if (usage <= 0) {
+             section.setValue(type, 100) // 防止除以0，给予固定值
+          } else {
+             section.setValue(type, Math.floor(storagePerShip / usage))
+          }
+        })
+      } else if (section.tabValue === 'defense') {
+        if (!selectedPlanet.value) return
+        const siloLevel = selectedPlanet.value.buildings[BuildingType.MissileSilo] || 0
+        const missileCapacity = siloLevel * 10
+        const halfCapacity = missileCapacity / 2
+        
+        section.items.forEach((item: string) => {
+          if (item === DefenseType.AntiBallisticMissile) {
+            // 反弹道导弹占用1个空间，分配一半容量
+            section.setValue(item, Math.floor(halfCapacity))
+          } else if (item === DefenseType.InterplanetaryMissile) {
+            // 星际导弹占用2个空间，分配一半容量
+            section.setValue(item, Math.floor(halfCapacity))
+          } else {
+            section.setValue(item, 10000)
+          }
+        })
+      }
+      toast.success(t('gmView.presetApplied') || '默认预设应用成功')
+    } else {
+      if (customPresets.value[section.tabValue]) {
+        const customPreset = customPresets.value[section.tabValue]!.find((p: GMPreset) => p.id === presetId)
+        if (customPreset) {
+          Object.entries(customPreset.values).forEach(([k, v]) => {
+            section.setValue(k, v as number)
+          })
+          toast.success(t('gmView.presetApplied') || '预设应用成功')
+        }
+      }
+    }
+  }
+  // --- 预设系统结束 ---
 
   const router = useRouter()
   const gameStore = useGameStore()
@@ -281,7 +459,8 @@
     router.push('/')
   }
 
-  const selectedPlanetId = ref<string>(gameStore.player.planets[0]?.id || '')
+  // 默认选中当前正在游玩的星球
+  const selectedPlanetId = ref<string>(gameStore.currentPlanetId || gameStore.player.planets[0]?.id || '')
   const officerDays = ref<Record<OfficerType, number>>({} as Record<OfficerType, number>)
   const selectedNPCId = ref<string>(npcStore.npcs[0]?.id || '')
   const targetPlanetIndex = ref<string>('0')
@@ -659,11 +838,13 @@
   const maxAllResources = () => {
     if (!selectedPlanet.value) return
 
-    const maxAmount = 1000000000000000000
-    selectedPlanet.value.resources.metal = maxAmount
-    selectedPlanet.value.resources.crystal = maxAmount
-    selectedPlanet.value.resources.deuterium = maxAmount
-    selectedPlanet.value.resources.darkMatter = maxAmount
+    // 计算当前星球的资源存储上限
+    const capacity = publicLogic.getResourceCapacity(selectedPlanet.value, gameStore.player.officers)
+
+    selectedPlanet.value.resources.metal = capacity.metal
+    selectedPlanet.value.resources.crystal = capacity.crystal
+    selectedPlanet.value.resources.deuterium = capacity.deuterium
+    selectedPlanet.value.resources.darkMatter = capacity.darkMatter
 
     toast.success(t('gmView.maxAllResourcesSuccess'))
   }

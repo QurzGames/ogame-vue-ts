@@ -79,7 +79,7 @@ export const tryGenerateMoon = (
 
   // 生成月球
   const moon: Planet = {
-    id: `moon_${Date.now()}`,
+    id: `moon_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     name: `Moon [${planetPosition.galaxy}:${planetPosition.system}:${planetPosition.position}]`,
     ownerId: playerId,
     position: planetPosition,

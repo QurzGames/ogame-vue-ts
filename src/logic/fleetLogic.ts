@@ -61,7 +61,7 @@ export const createFleetMission = (
 ): FleetMission => {
   const now = Date.now()
   return {
-    id: `mission_${now}`,
+    id: `mission_${now}_${Math.random().toString(36).substring(2, 9)}`,
     playerId,
     originPlanetId,
     // 深拷贝targetPosition，避免多个任务共享同一个引用
@@ -414,7 +414,7 @@ export const processColonizeArrival = (
 
   // 创建新殖民地
   const newPlanet: Planet = {
-    id: `planet_${Date.now()}`,
+    id: `planet_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     name: `${colonyNameTemplate} ${mission.targetPosition.galaxy}:${mission.targetPosition.system}:${mission.targetPosition.position}`,
     ownerId: player.id,
     position: mission.targetPosition,
@@ -564,7 +564,7 @@ export const processSpyArrival = (
   const wasDetected = Math.random() < detectionChance
 
   const spyReport: SpyReport = {
-    id: `spy_${Date.now()}`,
+    id: `spy_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
     timestamp: Date.now(),
     spyId: attacker.id,
     targetPlanetId: targetPlanet.id,
