@@ -708,30 +708,30 @@
   }
 
   // 按关系状态分类NPC（同时应用搜索过滤）
-  const allNpcs = computed(() => sortNpcs(npcStore.npcs.filter(matchesSearch)))
+  // 先统一排序一次，避免不同标签页在同一批数据上重复排序
+  const sortedNpcs = computed(() => sortNpcs(npcStore.npcs.filter(matchesSearch)))
+
+  const allNpcs = computed(() => sortedNpcs.value)
 
   const friendlyNpcs = computed(() => {
-    return sortNpcs(npcStore.npcs.filter(npc => {
-      if (!matchesSearch(npc)) return false
+    return sortedNpcs.value.filter(npc => {
       const relation = getRelation(npc.id)
       return relation?.status === RelationStatus.Friendly
-    }))
+    })
   })
 
   const neutralNpcs = computed(() => {
-    return sortNpcs(npcStore.npcs.filter(npc => {
-      if (!matchesSearch(npc)) return false
+    return sortedNpcs.value.filter(npc => {
       const relation = getRelation(npc.id)
       return !relation || relation.status === RelationStatus.Neutral
-    }))
+    })
   })
 
   const hostileNpcs = computed(() => {
-    return sortNpcs(npcStore.npcs.filter(npc => {
-      if (!matchesSearch(npc)) return false
+    return sortedNpcs.value.filter(npc => {
       const relation = getRelation(npc.id)
       return relation?.status === RelationStatus.Hostile
-    }))
+    })
   })
 
   // 分页辅助函数

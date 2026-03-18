@@ -552,6 +552,8 @@
         })
       } else if (section.tabValue === 'ships') {
         if (!selectedPlanet.value) return
+        // 某些过滤场景下舰船列表可能为空，避免平均分配时除以 0
+        if (!section.items.length) return
         
         // 重新计算最大舰队仓储，确保数据是最新的
         const maxStorage = calculateMaxFleetStorage(selectedPlanet.value, gameStore.player.technologies)
