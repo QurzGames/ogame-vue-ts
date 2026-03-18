@@ -427,7 +427,7 @@
   import NpcRelationCard from '@/components/npc/NpcRelationCard.vue'
   import NpcRelationRow from '@/components/npc/NpcRelationRow.vue'
   import { RelationStatus } from '@/types/game'
-  import type { DiplomaticRelation } from '@/types/game'
+  import type { DiplomaticRelation, NPC } from '@/types/game'
   import * as npcBehaviorLogic from '@/logic/npcBehaviorLogic'
   import {
     Search,
@@ -481,8 +481,8 @@
   }
 
   // 排序函数
-  const sortNpcs = (npcs: typeof npcStore.npcs) => {
-    return [...npcs].sort((a, b) => {
+  const sortNpcs = (npcs: NPC[], predicate: (npc: NPC) => boolean = () => true) => {
+    return npcs.filter(predicate).sort((a, b) => {
       let valA = 0
       let valB = 0
 
@@ -707,7 +707,7 @@
   }
 
   // 搜索过滤函数
-  const matchesSearch = (npc: (typeof npcStore.npcs)[0]) => {
+  const matchesSearch = (npc: NPC) => {
     if (!searchQuery.value.trim()) return true
     const query = searchQuery.value.toLowerCase().trim()
     return npc.name.toLowerCase().includes(query) || npc.id.toLowerCase().includes(query)
@@ -715,7 +715,7 @@
 
   // 按关系状态分类NPC（同时应用搜索过滤）
   // 先统一排序一次，避免不同标签页在同一批数据上重复排序
-  const sortedNpcs = computed(() => sortNpcs(npcStore.npcs.filter(matchesSearch)))
+  const sortedNpcs = computed(() => sortNpcs(npcStore.npcs, matchesSearch))
 
   const allNpcs = computed(() => sortedNpcs.value)
 

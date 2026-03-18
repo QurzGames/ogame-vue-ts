@@ -319,6 +319,7 @@
   import * as publicLogic from '@/logic/publicLogic'
   import { calculateMaxFleetStorage } from '@/logic/fleetStorageLogic'
   import { calculateMissileSiloCapacity } from '@/logic/missileLogic'
+  import { generateId } from '@/utils/id'
   import { Home, Trash2 } from 'lucide-vue-next'
 
   // --- 预设系统 ---
@@ -461,7 +462,7 @@
     }
     
     const newPreset: GMPreset = {
-      id: Date.now().toString(),
+      id: generateId('gm_preset'),
       name,
       values
     }
