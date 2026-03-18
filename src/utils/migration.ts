@@ -141,12 +141,10 @@ export const migrateGameData = (): void => {
             const posKey = `${planet.position.galaxy}:${planet.position.system}:${planet.position.position}`
             const mapKey = `${planet.parentPlanetId}_${posKey}`
             
-            if (idMap.has(mapKey)) {
-              const newParentId = idMap.get(mapKey)
-              if (newParentId) {
-                planet.parentPlanetId = newParentId
-                needsSave = true
-              }
+            const newParentId = idMap.get(mapKey)
+            if (newParentId) {
+              planet.parentPlanetId = newParentId
+              needsSave = true
             }
           }
         })
