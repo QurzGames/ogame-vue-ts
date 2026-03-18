@@ -1226,6 +1226,8 @@ export default {
   diplomacy: {
     sort: {
       label: '並び替え',
+      ascending: '昇順',
+      descending: '降順',
       reputation: '評判',
       planets: '惑星',
       difficulty: '難易度',

@@ -1209,6 +1209,8 @@ export default {
   diplomacy: {
     sort: {
       label: 'Ordenar',
+      ascending: 'Ascendente',
+      descending: 'Descendente',
       reputation: 'Reputación',
       planets: 'Planetas',
       difficulty: 'Dificultad',

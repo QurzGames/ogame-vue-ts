@@ -1195,6 +1195,8 @@ export default {
   diplomacy: {
     sort: {
       label: '排序',
+      ascending: '升序',
+      descending: '降序',
       reputation: '聲望',
       planets: '星球',
       difficulty: '難度',

@@ -1307,6 +1307,8 @@ export default {
     searchPlaceholder: 'Search NPC name...',
     sort: {
       label: 'Sort',
+      ascending: 'Ascending',
+      descending: 'Descending',
       reputation: 'Reputation',
       planets: 'Planets',
       difficulty: 'Difficulty',

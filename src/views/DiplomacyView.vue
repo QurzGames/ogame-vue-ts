@@ -207,7 +207,7 @@
           variant="outline"
           size="icon"
           @click="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'"
-          :title="sortOrder === 'asc' ? 'Ascending' : 'Descending'"
+          :title="sortOrder === 'asc' ? t('diplomacy.sort.ascending') : t('diplomacy.sort.descending')"
         >
           <ArrowUpDown class="h-4 w-4" />
         </Button>

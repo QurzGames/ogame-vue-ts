@@ -1275,6 +1275,8 @@ export default {
     searchPlaceholder: '搜索NPC名称...',
     sort: {
       label: '排序',
+      ascending: '升序',
+      descending: '降序',
       reputation: '好感度',
       planets: '星球数量',
       difficulty: '难度',

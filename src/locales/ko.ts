@@ -1176,6 +1176,8 @@ export default {
   diplomacy: {
     sort: {
       label: '정렬',
+      ascending: '오름차순',
+      descending: '내림차순',
       reputation: '평판',
       planets: '행성',
       difficulty: '난이도',
